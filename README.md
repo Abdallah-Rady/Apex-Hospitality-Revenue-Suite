@@ -1,4 +1,3 @@
-[github_project_documentation (1).md](https://github.com/user-attachments/files/34550075/github_project_documentation.1.md)
 # 🏨 Apex Hospitality | Enterprise Revenue & Operations Intelligence Suite
 
 > **An executive-ready Business Intelligence & Financial Engineering ecosystem delivering actionable, 360-degree visibility across hotel operations, guest demographics, and P&L departmental profitability.**
