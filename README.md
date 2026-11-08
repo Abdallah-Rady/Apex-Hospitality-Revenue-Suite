@@ -1,166 +1,72 @@
-[github_project_documentation.md](https://github.com/user-attachments/files/34550027/github_project_documentation.md)
-# Apex Hospitality: Full-Cycle Revenue, Operations & Demographics Intelligence Suite
+[github_project_documentation (1).md](https://github.com/user-attachments/files/34550075/github_project_documentation.1.md)
+# 🏨 Apex Hospitality | Enterprise Revenue & Operations Intelligence Suite
 
-An enterprise-grade business intelligence and financial modeling suite engineered for luxury hospitality leadership. This project translates multi-departmental hotel operations—spanning room bookings, F&B outlets, P&L departmental overhead, and guest demographic profiles—into actionable, high-margin strategic growth levers.
-
----
-
-## Executive Summary & Business Challenge
-
-In the hospitality sector, headline occupancy rates often mask operational inefficiencies and profit leaks. High occupancy driven primarily by high-commission Online Travel Agencies (OTAs) can severely compress Gross Operating Profit (GOP), while unmonitored departmental overhead (such as housekeeping and utilities) erodes bottom-line margins.
-
-This intelligence suite addresses three core organizational dilemmas:
-1. **Channel Yield Disparity:** Comparing net profitability between direct booking channels and third-party OTAs after commission structures.
-2. **Granularity Alignment:** Resolving the analytical gap between transaction-level room reservations and high-level departmental expense allocations.
-3. **Guest Lifetime Value & Root-Cause Drivers:** Decoding demographic behavior, loyalty tier adoption, and tracing revenue paths down to length of stay and room amenities.
+> **An executive-ready Business Intelligence & Financial Engineering ecosystem delivering actionable, 360-degree visibility across hotel operations, guest demographics, and P&L departmental profitability.**
 
 ---
 
-## Data Architecture & Semantic Modeling
-
-### Dimensional Modeling Strategy
-The data foundation utilizes an optimized Star/Snowflake schema tailored for scalable enterprise reporting:
-
-* **Fact Tables:**
-  * `Fact_Reservations`: Transaction-level booking records, daily room rates, check-in/out timestamps, booking status, and outlet charges.
-  * `Fact_Expenses`: Periodic departmental expenditure categorized into fixed and variable allocations.
-  * `Fact_FB_Sales`: Point-of-sale dining revenue across hotel outlets (Fine Dining, Pool Bar, Room Service, etc.).
-* **Dimension Tables:**
-  * `Dim_Guests`: Unique guest identifiers, demographic age brackets, gender, nationality, and loyalty membership tiers.
-  * `Dim_Rooms`: Room inventory, room tier hierarchy (`Presidential`, `Suite`, `Deluxe`, `Standard`), views (`Sea`, `Pool`, `Garden`, `City`), and base capacity.
-  * `Dim_Date`: Standard calendar hierarchy enabling accurate Month-over-Month (MoM) and seasonal variance calculations.
-
-### Technical Problem Solved: Granularity Mismatch & Filter Propagation
-* **The Challenge:** Departmental expenses exist at the hotel/department level, whereas bookings exist at the individual room and channel level. Initial models caused expense figures and Net Operating Profit to artificially repeat across granular room-type slicers.
-* **The Resolution:** Strict separation of concerns was implemented in the analytical model. Global P&L metrics were decoupled from micro-operational room grids, ensuring that transactional filters (e.g., specific booking channels or room amenities) accurately aggregate operational metrics without skewing broader hotel-level overhead calculations.
+### 💼 Recruiter Quick-Scan | Project DNA
+* **Domain:** Luxury Hospitality, Hotel Asset Management & Revenue Strategy
+* **Data Scale:** Analyzing **$3.2M+ in Total Revenue**, multi-departmental P&L overhead ($2.58M), and 500+ detailed guest behavioral profiles across 214 nationalities
+* **Core Competencies:** Dimensional Data Modeling, Advanced Granularity Management, Business Logic Engineering, Executive UI/UX Architecture, Financial Metric Synthesis
 
 ---
 
-## Core DAX Business Logic & Metrics Catalog
+## 🎯 The Business Challenge & Executive Value
 
-### 1. Financial Performance Metrics
+In modern hospitality management, high occupancy rates often create a false sense of financial health. Hotels frequently face hidden margin erosion caused by:
+1. **Third-Party Commission Drain:** Over-reliance on Online Travel Agencies (OTAs) that compress net profits despite high volume.
+2. **Operational Cost Creep:** Unmonitored departmental overhead (Utilities, Housekeeping, Maintenance) eating into room yield.
+3. **Siloed Systems:** Disconnected data between reservations, POS dining outlets, and general accounting.
 
-* **Total Hotel Revenue:**
-  $$\text{Total Hotel Revenue} = \sum(\text{Reservations}[\text{Room\_Revenue}]) + \sum(\text{FB\_Sales}[\text{Sales\_Amount}])$$
-  ```dax
-  Total Hotel Revenue = 
-  SUM(Reservations[Total_Room_Revenue]) + SUM(F&B_Sales[Sales_Amount])
-  ```
-
-* **Net Operating Profit (NOP):**
-  $$\text{NOP} = \text{Total Hotel Revenue} - \text{Total Expenses}$$
-  ```dax
-  Net Operating Profit = [Total Hotel Revenue] - [Total Expenses]
-  ```
-
-* **Gross Operating Profit Margin (GOP Margin %):**
-  $$\text{GOP Margin \%} = \frac{\text{Net Operating Profit}}{\text{Total Hotel Revenue}}$$
-  ```dax
-  GOP Margin % = 
-  DIVIDE([Net Operating Profit], [Total Hotel Revenue], 0)
-  ```
-
-* **Revenue Per Available Room (RevPAR):**
-  $$\text{RevPAR} = \text{ADR} \times \text{Occupancy Rate \%}$$
-  ```dax
-  RevPAR = 
-  [ADR] * [Occupancy Rate %]
-  ```
-
-### 2. Operational & Guest Demographic Metrics
-
-* **Average Length of Stay (ALOS):**
-  ```dax
-  Average Length of Stay = 
-  AVERAGE(Reservations[Number_of_Nights])
-  ```
-
-* **Loyalty Program Penetration Rate (%):**
-  ```dax
-  Loyalty Members % = 
-  DIVIDE(
-      CALCULATE(
-          DISTINCTCOUNT(Guests[Guest_ID]), 
-          Guests[Loyalty_Level] <> "None" && NOT(ISBLANK(Guests[Loyalty_Level]))
-      ),
-      DISTINCTCOUNT(Guests[Guest_ID]),
-      0
-  )
-  ```
-
-* **Repeat Guest Base:**
-  ```dax
-  Repeat Guests = 
-  COUNTROWS(
-      FILTER(
-          VALUES(Guests[Guest_ID]),
-          CALCULATE(COUNTROWS(Reservations)) > 1
-      )
-  )
-  ```
+**The Solution:** This project bridges the gap between raw front-desk transactions and boardroom decisions—turning multi-source data streams into a unified strategic intelligence dashboard.
 
 ---
 
-## Analytical Modules & Report Architecture
+## ⚡ Technical Architecture & Engineering Triumphs
 
-The solution is divided into five dedicated analytical environments accessed through an executive landing navigation portal:
+### 1. Multi-Fact Granularity Reconciliation (The "Filter Propagation" Solution)
+* **The Problem:** Financial expenses exist at a macro hotel/department level, while bookings occur at a granular room/channel level. Standard relational models risk duplicating overhead costs across room-level filters.
+* **The Engineering Fix:** Designed a decoupled, star-aligned schema separating transactional room metrics from aggregate operational P&L tables. This guarantees that deep-dive filters (such as booking channels or room view preferences) never distort global financial margins or Net Operating Profit (NOP).
 
-### 1. Executive Macro Overview
-* **Primary Focus:** High-level executive pulse monitoring financial KPIs, MoM trends, and monthly seasonal cash flows.
-* **Key Visualizations:** Dual-axis monthly revenue versus operational expense trajectories, booking channel revenue breakdown ($1.3M OTA vs. $1.18M Direct), room type revenue distribution, and reservation status breakdowns (Confirmed vs. Cancelled vs. No-Show).
-
-### 2. Rooms & Operational Occupancy
-* **Primary Focus:** Granular operational metrics evaluating room category yield and distribution channel effectiveness.
-* **Key Visualizations:** Stacked channel volume, room view preference distributions (Sea, Garden, Pool, City), and a detailed performance matrix detailing ADR, Cancellation Rate %, and RevPAR by room type.
-
-### 3. Financial & Departmental Profitability
-* **Primary Focus:** Rigorous P&L expense control and ancillary revenue contribution.
-* **Key Visualizations:** Waterfall cost categorization separating Fixed ($1.31M) from Variable ($1.27M) expenses, departmental expense distribution (Utilities, Marketing, Maintenance, Housekeeping, F&B), and secondary outlet revenue monitoring across payment methods (Room Charge, Credit Card, Cash).
-
-### 4. Guest Demographics & Behavioral Profiling
-* **Primary Focus:** Customer segmentation, guest profile mapping, and loyalty drivers.
-* **Key Visualizations:** Dynamic age bracket distributions (`Under 25`, `26-35`, `36-50`, `51-65`, `65+`), loyalty tier classification (Platinum, Gold, Silver, None), gender ratios, and special amenity request distributions (High Floor, Early Check-in, Late Check-out, Non-smoking).
-
-### 5. Root-Cause Revenue Decomposition Tree
-* **Primary Focus:** Unconstrained exploratory pathway analysis for senior leadership.
-* **Analytical Flow:** Dissects the total $3.16M+ room revenue along recursive branches:
-  $$\text{Month} \longrightarrow \text{Booking Channel} \longrightarrow \text{Loyalty Tier} \longrightarrow \text{Room Type} \longrightarrow \text{Special Requests} \longrightarrow \text{Demographics} \longrightarrow \text{Length of Stay}$$
+### 2. High-Yield Data Modeling & Performance
+* Built an optimized dimensional foundation (`Fact_Reservations`, `Fact_Expenses`, `Fact_FB_Sales`, `Dim_Guests`, `Dim_Rooms`, `Dim_Date`).
+* Programmed dynamic data categorization in ETL for automated demographic cohort grouping (`Under 25`, `26–35`, `36–50`, `51–65`, `65+`), eliminating row-level calculation overhead.
+* Implemented clean Month-over-Month (MoM) intelligence tracking seasonal velocity across core indicators.
 
 ---
 
-## Strategic Business Findings & Recommendations
+## 📊 The 5-Pillar Executive Decision Engine
 
-1. **Direct Channel Margin Optimization:**
-   While third-party OTAs drive the highest aggregate volume ($1.30M), direct bookings generate nearly comparable revenue ($1.18M) without third-party commission deductions. Incentivizing direct booking perks can materially lift overall GOP Margin.
-2. **F&B as an Essential Profit Driver:**
-   Ancillary outlets generated $440K in incremental revenue, with Fine Dining accounting for over 50% ($223K). Promoting specialized dining packages during room booking will optimize Average Revenue Per Guest.
-3. **Core Demographic Concentration:**
-   The primary booking segment resides in the 51–65 age demographic, followed closely by the 36–50 demographic. Operational tailoring (e.g., quiet room locations, health amenities, flexible check-outs) directly correlates with the observed 90%+ repeat guest affinity.
-
----
-
-## Project Repository Structure
-
-```text
-├── datasets/
-│   ├── Fact_Reservations.csv
-│   ├── Fact_Expenses.csv
-│   ├── Fact_FB_Sales.csv
-│   ├── Dim_Guests.csv
-│   └── Dim_Rooms.csv
-├── documentation/
-│   ├── data_dictionary.md
-│   └── dax_reference_guide.md
-├── reports/
-│   └── Apex_Hospitality_Intelligence_Suite.pbix
-└── README.md
-```
+| Module | Executive Focus | Key Business Impact |
+| :--- | :--- | :--- |
+| **1. Executive Overview** | High-level P&L pulse & financial vitals | Monitors **$3.2M Revenue**, **$587.1K Net Operating Profit**, and an **18.6% GOP Margin**, synchronizing revenue peaks against seasonal expense cycles. |
+| **2. Rooms & Occupancy** | Operational yield & channel distribution | Compares net yield across **Presidential, Suite, Deluxe, and Standard** inventory while evaluating room view premiums (Sea vs. Pool vs. City). |
+| **3. Financials & Profitability** | Expense control & secondary spend | Decouples **$2.58M in Expenses** into Fixed ($1.31M) vs. Variable ($1.27M) structures, tracking **$440K in F&B spend** led by Fine Dining ($223K). |
+| **4. Guests & Demographics** | Retention, lifetime value & loyalty | Profiles **500 unique guests** with an outstanding **457 repeat guest conversion** and **33.8% loyalty adoption**, averaging **$6.5K spend per guest**. |
+| **5. Root-Cause Revenue Tree** | Unconstrained exploratory decomposition | An interactive exploratory pathfinder tracing room revenue from **Month ➔ Channel ➔ Loyalty ➔ Room Category ➔ Special Requests ➔ Length of Stay**. |
 
 ---
 
-## Author & Contact Information
+## 💡 Strategic Takeaways Uncovered by the Data
 
-* **Lead Business Intelligence Developer:** Abdallah Rady
-* **Email:** a.radyy960@gmail.com
+* **The Direct-Booking Opportunity:** While OTAs generated the highest raw revenue ($1.30M), Direct channels produced $1.18M with zero third-party commission overhead—proving that direct-loyalty marketing yields significantly higher net profit margins.
+* **Secondary Revenue Capture:** Food & Beverage generated $440K in incremental gross receipts, confirming that packaging room nights with fine-dining experiences directly increases Average Revenue Per Guest (ARPG).
+* **The Core Demographic Engine:** Guests aged **51–65** and **36–50** accounted for the vast majority of volume and ancillary spend, proving that quiet floor allocations and tailored amenities directly drive repeat booking loyalty.
+
+---
+
+## 🛠️ Core Competencies Demonstrated
+
+* **Business & Financial Acumen:** Deep understanding of hospitality KPIs (RevPAR, ADR, GOP Margin %, Net Operating Profit, ALOS, Booking Lead Times).
+* **Enterprise BI & Data Architecture:** Star-schema dimensional modeling, dimensional slicing, granularity reconciliation, and custom cohort segmentation.
+* **Executive Presentation & Storytelling:** High-contrast, dark-mode Glassmorphism design engineered specifically for C-suite readability and intuitive decision-making.
+
+---
+
+## 📬 Contact & Collaboration
+
+* **Lead BI Engineer & Analyst:** Abdallah Rady
+* **Email:** [a.radyy960@gmail.com](mailto:a.radyy960@gmail.com)
 * **Phone / WhatsApp:** +20 109 604 3027
-* **Specialization:** Enterprise BI Architecture, Advanced DAX Modeling & Revenue Intelligence
+* **Areas of Expertise:** Business Intelligence Architecture, Revenue Strategy, Advanced Financial Modeling & Data Engineering
